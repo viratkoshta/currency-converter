@@ -1,0 +1,86 @@
+const currencies = [
+  ["USD", "US Dollar"],
+  ["INR", "Indian Rupee"],
+  ["EUR", "Euro"],
+  ["GBP", "British Pound"],
+  ["JPY", "Japanese Yen"],
+  ["AUD", "Australian Dollar"],
+  ["CAD", "Canadian Dollar"]
+];
+
+const amountInput = document.getElementById("amount");
+const fromCurrency = document.getElementById("from-currency");
+const toCurrency = document.getElementById("to-currency");
+const result = document.getElementById("result");
+const rateInfo = document.getElementById("rate-info");
+const message = document.getElementById("message");
+
+function addCurrencies() {
+  currencies.forEach(function (currency) {
+    const optionText = currency[0] + " - " + currency[1];
+    fromCurrency.add(new Option(optionText, currency[0]));
+    toCurrency.add(new Option(optionText, currency[0]));
+  });
+
+  fromCurrency.value = "USD";
+  toCurrency.value = "INR";
+}
+
+function showMessage(text, isError) {
+  message.textContent = text;
+  message.className = isError ? "error" : "";
+}
+
+async function convertCurrency() {
+  const amount = Number(amountInput.value);
+  const from = fromCurrency.value;
+  const to = toCurrency.value;
+
+  if (amount < 0 || isNaN(amount)) {
+    showMessage("Please enter a valid amount.", true);
+    return;
+  }
+
+  if (from === to) {
+    result.textContent = amount.toFixed(2) + " " + to;
+    rateInfo.textContent = "Both currencies are the same.";
+    showMessage("Done!", false);
+    return;
+  }
+
+  result.textContent = "Loading...";
+  rateInfo.textContent = "Getting the latest exchange rate.";
+  showMessage("", false);
+
+  try {
+    const url = "https://api.frankfurter.dev/v2/rate/" + from + "/" + to;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error("Could not get the rate");
+    }
+
+    const data = await response.json();
+    const convertedAmount = amount * data.rate;
+
+    result.textContent = convertedAmount.toFixed(2) + " " + to;
+    rateInfo.textContent = "1 " + from + " = " + data.rate.toFixed(4) + " " + to + " (Rate date: " + data.date + ")";
+    showMessage("Conversion completed.", false);
+  } catch (error) {
+    result.textContent = "Not available";
+    rateInfo.textContent = "Please check your internet connection and try again.";
+    showMessage("The API could not be reached.", true);
+  }
+}
+
+document.getElementById("convert").addEventListener("click", convertCurrency);
+
+document.getElementById("swap").addEventListener("click", function () {
+  const oldFrom = fromCurrency.value;
+  fromCurrency.value = toCurrency.value;
+  toCurrency.value = oldFrom;
+  convertCurrency();
+});
+
+addCurrencies();
+convertCurrency();
