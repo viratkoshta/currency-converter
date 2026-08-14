@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Currency Converter website</title>
+  <link rel="stylesheet" href="tic.css">
+</head>
+<body>
+  <header>
+    <h1>Currency Converter by viratkoshta</h1>
+    <p>Convert money using a exchange rate API</p>
+  </header>
+
+  <main>
+    <section class="converter-box">
+      <h2>Convert your money</h2>
+      <p>Enter an amount, choose two currencies, and press convert.</p>
+
+      <label for="amount">Amount</label>
+      <input id="amount" type="number" value="1" min="0" step="any">
+
+      <div class="currency-row">
+        <div>
+          <label for="from-currency">From</label>
+          <select id="from-currency"></select>
+        </div>
+
+        <button class="swap-button" id="swap" type="button" aria-label="Swap currencies">⇄</button>
+
+        <div>
+          <label for="to-currency">To</label>
+          <select id="to-currency"></select>
+        </div>
+      </div>
+
+      <button class="convert-button" id="convert" type="button">Convert</button>
+
+      <div class="result" aria-live="polite">
+        <p>Your converted amount</p>
+        <div id="result">Loading...</div>
+        <p id="rate-info">Getting the latest exchange rate.</p>
+      </div>
+
+      <p id="message" role="status"></p>
+    </section>
+
+    <section class="about-box">
+      <h2>How this website works</h2>
+      <p>This project uses an API to get the latest exchange rate instead of using fixed values.</p>
+      <ul>
+        <li>JavaScript sends a request using <code>fetch()</code>.</li>
+        <li>The API sends back the exchange rate as JSON data.</li>
+        <li>The website multiplies your amount by that rate.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>Made as a simple currency converter project &middot; Rates from Frankfurter API</footer>
+
+  <script src="tic.js"></script>
+</body>
+</html>
